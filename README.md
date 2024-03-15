@@ -1,63 +1,89 @@
-# smart_contrct
-This Project Is To Provide Basic UnderStanding About Error Handlers In Solidity And Functions And Use Of Each!!!!
-
+# Heartz-ERC20
+A Simple contract Of Token With ERC20 Standards Which Can Perform Simple Tasks like :
+**Get Balance**  ,
+**Mint Token** ,
+**Transfer Token** ,
+ And **Burn Token**
 ## Description
-
-This Project Goes Through How You Can Use Different Types of Error Handlers In Solidity And Pros And Cons Compared To Each Other There Are Mainly Three Types Of Error Handlers In Solidity Wjich Are Require,Revert,Assert Which Are Explained Detail In Below:
-
-require(): Used to validate certain conditions before further execution of a function. It takes two parameters as an input.
-The first parameter is the condition that you want to validate and the second parameter is the message that will be passed back to the caller if the condition fails. If the condition is satisfied, then the execution of the function continues and the execution jumps to the next statement. 
-
-However, if the condition fails, then the function execution is terminated and the message (the second parameter) is displayed in the logs. The second parameter, however, is optional. require() will work even if you pass only parameter, that is, the condition to be checked. The require() statement is defined as follows:
-
-require(<condition to be validated> , <message to be displayed if the condition fails>);
-
-assert(): The assert function, like require, is a convenience function that checks for conditions. If a condition fails, then the function execution is terminated with an error message.
-assert() takes only one parameter as input. You pass a condition to assert(), and if the condition is true, then the function execution continues and the execution jumps to the next statement in the function. The assert() statement is defined as:
-
-assert(<condition to be checked/validated>);
-
-revert(): Can be used to flag an error and revert the current call. You can also provide a message containing details about the error, and the message will be passed back to the caller. However, the message, like in require(), is an optional parameter. revert() causes the EVM to revert all the changes made to the state, and things return to the initial state or the state before the function call was made.
-The reason for reverting is that there is no safe way to continue execution because something unexpected happened. This is important as it helps in saving gas.
-
-Since the function execution stops after the revert() statement, the remaining gas is also returned back to the user. If you don't use the revert() statement and some error occurs, then the entire gas is lost. Using revert() does not return the consumed gas, however. The gas that is consumed is consumed, and it cannot be returned.
+The token Name Is Heartz And Has Standard Of ERC20 Which Can Be deployed In Etherium Mainnet Or TestNetwork Using Web3 Wallet Like [**Metamask**](https://metamask.io/)
+The Token Is Written In Solidity And ERC20 Templates And More Details Can Be obtained From OpenZeppelin libraries [here](https://openzeppelin.com/contracts/)
+And You Can Build Your on Token Contract From Scratch By Importing ERC20 Standards From This [page](@openzeppelin/contracts@5.0.1/token/ERC20/ERC20.sol)
+This Project Just Shows A Simple Version Of token Contract In Solidity With ERC20 Standards It Doesn't Means Final Output It Needs To Be Further Developer For Interacting With Deapps And Deploy In Main Net 
+**TokenDetails**
+- **Token Name**Heartz
+- **Token Symbol**Hz
+- **Decimals**18
+- You Can Change This To Your Desire Note:(Decimel Should be:8,16)
 ## Getting Started
-You Guys Can Practice Using Error Handlers in Solidity With The Help Of Basic Contract That I Provided With This Project This Contract "Error" Contain Test Functions for Testing Each Of The Error Handlers And Has A Brief Note About What Are Their Specifications Download The Contarct From The Repository
+*For Getting Started Interacting With the contract You Need An Enviornment to Run Solidity Contract You Can Use Online Enviornment like [Gitpod](https://www.gitpod.io/) Or [Remix](https://remix.ethereum.org/) Or You Can Simply Run In Offline Enviornments Like VSCode With Help Of redhat 
+* After You Setup your Enviornment Download The Heartz.sol File From Repository And Open In Your Enviornment
+* You Can Change The Name And Symbol Of The Token Whatever you Wish
+* You Can Interact With The Contract Using Functions:
+* **To Get Balance :**  getBalance() - To Check The Hz Balance In Your Account
+* **To Mint Heartz :**  mintHeartz(uint256 amount) - Just Type In The Amount Of Token That You Need To Mint ("Only Owner Can Mint Tokens")
+* **To Tranfer Heartz:**  transferHeartz(address _receiver, uint256 _value) - Give The Reciever Adress And Amount Of Token Wanna Transfer
+* **To Burn Heartz :**  burnHeartz(uint256 _value) - Enter The Value Of Tokens That You Wann Burn 
 
-### Installing
-
-* You Can Get acess To the Contract By Simply Going To The Repository File Section And Can Run In Any Online And Offline Enviornment 
-* popular Offline IDE Such As Vscode Or ONline IDE Like Gitpod Or Remix Can Be Used!!! For This Project I Recommend To Use Remix As This Platform Is Dedicated To Run Solidity Program And Has Many Features No Need For Any Kind of Extensions!!
 
 ### Executing program
 
-* Simply Import The Contract To Your IDE And Start Your Program By: 
-* Compile The Contract
-```
-COMPILE
-```
-* Deploy The Contract
-```
-DEPLOY
-```
-*After You SucessFully Deployed Contract You Can Start Testing The Error Handlers By Giving Values(i) And Running The TestFunctions(TestRequire,TestAssert,TestRevert)
-```
-testrequire----->i=x------->run
-```
-*You Guys Can Change The Value Of 'num' And Can Test The Assert Also Can Change The Error Message And The Conditions For The Error Handlers To  Become TRUE!!! 
-## Help
+To run this program, you can use Remix, an online Solidity IDE. To get started, go to the Remix website at https://remix.ethereum.org/.
 
-If You Guys Have Any Doubts Related To Error Handelers Or The Contract That I Give Feel Free To Ask  For that On My Gmail
+Once you are on the Remix website, create a new file by clicking on the "+" icon in the left-hand sidebar. Save the file with a .sol extension (Heartz.sol). Copy and paste the following code into the file:
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts@5.0.1/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts@5.0.1/access/Ownable.sol";
+
+contract MyToken is ERC20, Ownable {
+    constructor() ERC20("Heartz", "Hz")Ownable(msg.sender) {}
+    
+    function mintHeartz(uint256 amount) public onlyOwner {
+        _mint(msg.sender, amount);
+    }
+     function decimals() override public pure returns (uint8) {
+        return 0;
+    }
+
+    function getBalance() external view returns (uint256) {
+        return balanceOf(msg.sender);
+    }
+
+    function transferHeartz(address _receiver, uint256 _value) external {
+        require(balanceOf(msg.sender) >= _value, "You do not have enough Hertz Tokens");
+        approve(msg.sender, _value);
+        transferFrom(msg.sender, _receiver, _value);
+    }
+
+    function burnHeartz(uint256 _value) external {
+        require(balanceOf(msg.sender) >= _value, "You do not have enough Hertz Tokens");
+        _burn(msg.sender, _value);
+    }
+
+}
+
+      
+
+
+```
+
+To compile the code, click on the "Solidity Compiler" tab in the left-hand sidebar. Make sure the "Compiler" option is set to "0.8.4" (or another compatible version), and then click on the "Compile Heartz.sol" button.
+
+Once the code is compiled, you can deploy the contract by clicking on the "Deploy & Run Transactions" tab in the left-hand sidebar. Select the "Heartz" contract from the dropdown menu, and then click on the "Deploy" button.
+
+Once the contract is deployed, you can interact with it by calling With Functions Mentioned Above.
+## Help
+If By Chance You Face With Any Kind of Error Feel free To Contact Me I Will Be More Happy To Help You Via Gmail:
 ```
 iamoneofthechoosen1@gmail.com
 ```
-
 ## Authors
 
-Contributors names and contact info
-
-ex. Dabi 
-ex. [@Dabi](iamoneofthechoosen1@gmail.com)
+Metacrafter Vava
+[@Dabi](iamoneofthechoosen1@gmail.com)
 
 
 ## License
